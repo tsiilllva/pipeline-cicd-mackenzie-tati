@@ -1,0 +1,34 @@
+name: CD - Deploy Contínuo no GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar repositório
+        uses: actions/checkout@v3
+
+      - name: Verificar arquivos antes do deploy
+        run: |
+          echo "📂 Arquivos no projeto:"
+          ls -la site/
+          echo "✅ Verificação concluída!"
+
+      - name: Deploy no GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          publish_branch: gh-pages
+
+      - name: Confirmar deploy
+        run: |
+          echo "🚀 Deploy concluído com sucesso!"
