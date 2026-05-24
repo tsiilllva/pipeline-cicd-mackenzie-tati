@@ -1,0 +1,58 @@
+name: CI - Integração Contínua
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validar-e-testar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar repositório
+        uses: actions/checkout@v3
+
+      - name: Verificar se o index.html existe
+        run: |
+          if [ -f "site/index.html" ]; then
+            echo "✅ index.html encontrado!"
+          else
+            echo "❌ index.html não encontrado!"
+            exit 1
+          fi
+
+      - name: Validar conteúdo do index.html
+        run: |
+          if grep -q "<!DOCTYPE html>" site/index.html; then
+            echo "✅ Arquivo HTML válido!"
+          else
+            echo "❌ Arquivo HTML inválido!"
+            exit 1
+          fi
+
+      - name: Simular teste de lint HTML
+        run: |
+          echo "Rodando verificação básica de estrutura..."
+          if grep -q "<html" site/index.html && grep -q "</html>" site/index.html; then
+            echo "✅ Estrutura HTML ok!"
+          else
+            echo "❌ Estrutura HTML com problema!"
+            exit 1
+          fi
+
+      - name: Gerar artefato de build
+        run: |
+          mkdir -p build
+          cp site/index.html build/index.html
+          echo "Build gerado em: $(date)" > build/build-info.txt
+          echo "✅ Artefato gerado com sucesso!"
+
+      - name: Fazer upload do artefato
+        uses: actions/upload-artifact@v3
+        with:
+          name: site-build
+          path: build/
