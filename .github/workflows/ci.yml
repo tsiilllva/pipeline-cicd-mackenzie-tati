@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Clonar repositório
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Verificar se o index.html existe
         run: |
@@ -52,7 +52,7 @@ jobs:
           echo "✅ Artefato gerado com sucesso!"
 
       - name: Fazer upload do artefato
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: site-build
           path: build/
